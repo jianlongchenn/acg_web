@@ -15,7 +15,7 @@ export default function Home() {
 
   useEffect(() => {
     const fetchTracks = async () => {
-      const res = await fetch('http://127.0.0.1:8000/api/tracks/')
+      const res = await fetch('${process.env.NEXT_PUBLIC_API_URL}/api/tracks/')
       const data = await res.json()
       setTracks(data)
     }
