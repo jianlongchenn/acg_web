@@ -40,7 +40,7 @@ export default function UploadPage() {
     }
 
     try {
-      const res = await fetchWithAuth('${process.env.NEXT_PUBLIC_API_URL}/api/tracks/', {
+      const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/api/tracks/`, {
         method: 'POST',
         body: formData,
       })

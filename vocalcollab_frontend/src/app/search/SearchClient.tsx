@@ -25,7 +25,7 @@ export default function SearchClient() {
     const fetchResults = async () => {
       setLoading(true)
       try {
-        const res = await fetch('${process.env.NEXT_PUBLIC_API_URL}/api/tracks/')
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tracks/`)
         const data: Track[] = await res.json()
         const filtered = data.filter(
           (track) =>
