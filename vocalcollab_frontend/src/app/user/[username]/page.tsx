@@ -35,7 +35,7 @@ export default function UserPage() {
       const payload = JSON.parse(atob(token.split('.')[1]))
       setCurrentUser(payload.username)
 
-      fetchWithAuth(`http://127.0.0.1:8000/api/users/${username}/is_following/`, {
+      fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${username}/is_following/`, {
         headers: { 'Content-Type': 'application/json' },
       })
         .then(res => res.json())
@@ -46,15 +46,15 @@ export default function UserPage() {
         })
     }
 
-    fetch(`http://127.0.0.1:8000/api/users/${username}/tracks/`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${username}/tracks/`)
       .then(res => res.json())
       .then(setTracks)
 
-    fetchWithAuth(`http://127.0.0.1:8000/api/users/${username}/followers/`)
+    fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${username}/followers/`)
       .then(res => res.json())
       .then(setFollowers)
 
-    fetchWithAuth(`http://127.0.0.1:8000/api/users/${username}/following/`)
+    fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${username}/following/`)
       .then(res => res.json())
       .then(setFollowing)
   }, [username])
@@ -65,14 +65,14 @@ export default function UserPage() {
 
     setLoading(true)
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/users/${username}/follow/`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${username}/follow/`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       })
 
       if (res.ok) {
         setIsFollowing(prev => !prev)
-        const followerRes = await fetch(`http://127.0.0.1:8000/api/users/${username}/followers/`)
+        const followerRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${username}/followers/`)
         const updatedFollowers = await followerRes.json()
         setFollowers(updatedFollowers)
       }

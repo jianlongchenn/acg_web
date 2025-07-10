@@ -64,7 +64,7 @@ export default function TrackDetailPage() {
     }
 
     try {
-      const res = await fetchWithAuth(`http://127.0.0.1:8000/api/tracks/${id}/comments/`, {
+      const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/api/tracks/${id}/comments/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: newComment }),
