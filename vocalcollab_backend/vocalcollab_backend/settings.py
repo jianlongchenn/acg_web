@@ -154,10 +154,10 @@ SIMPLE_JWT = {
 
 if not DEBUG:
     CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': 'dc0usebet',
-        'API_KEY': '841215633551952',
-        'API_SECRET': 'NJiaAtLWEP965WzNGLR_rAq3BZo',
-    }
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+    }   
 
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
