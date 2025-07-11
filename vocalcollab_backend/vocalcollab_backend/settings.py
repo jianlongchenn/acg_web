@@ -30,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8wwr=pb)kavf))vszi+p4*c62tq-bu71t3+g*ce*vzgo2(j!53'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "true").lower() == "true"
 
 ALLOWED_HOSTS = [
     'acgweb-backend-production.up.railway.app',
@@ -154,10 +154,10 @@ SIMPLE_JWT = {
 
 if not DEBUG:
     CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
-    }   
+        'CLOUD_NAME': 'dc0usebet',
+        'API_KEY': '841215633551952',
+        'API_SECRET': 'NJiaAtLWEP965WzNGLR_rAq3BZo',
+    }
 
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
