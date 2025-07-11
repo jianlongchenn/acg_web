@@ -31,6 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'acgweb-backend-production.up.railway.app',
+    'acgweb-frontend-production.up.railway.app',
     'localhost',
     '127.0.0.1',
 ]
