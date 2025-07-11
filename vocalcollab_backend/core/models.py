@@ -2,6 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from PIL import Image
 from django.contrib.auth.models import User
+from cloudinary.models import CloudinaryField
 
 # Create your models here.
 
@@ -9,10 +10,10 @@ from django.contrib.auth.models import User
 class Track (models.Model):
     title = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
-    audio_file = models.FileField(upload_to='tracks/')
+    audio_file = CloudinaryField('audio_file', resource_type='video')
     tags = models.CharField(help_text="Please use comma to separate")
     created_time = models.DateTimeField(auto_now_add=True)
-    cover_image = models.ImageField(upload_to='covers/', blank=True, null=True)
+    cover_image = CloudinaryField('cover_image', blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tracks')
 
     def __str__(self):
