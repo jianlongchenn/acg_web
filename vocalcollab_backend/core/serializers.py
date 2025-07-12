@@ -8,19 +8,27 @@ from django.contrib.auth.models import User
 
 class TrackSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
-    cover_image = serializers.SerializerMethodField()
-    audio_file = serializers.SerializerMethodField()
+    cover_image = serializers.ImageField(required=False, allow_null=True)
+    audio_file = serializers.FileField(required=True)
 
     class Meta:
         model = Track
         fields = '__all__'
         read_only_fields = ['id', 'created_time', 'user']
-    
-    def get_cover_image(self, obj):
-        return obj.cover_image.url if obj.cover_image else None
-    
-    def get_audio_file(self, obj):
-        return obj.audio_file.url if obj.audio_file else None
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        if instance.cover_image:
+            rep['cover_image'] = instance.cover_image.url
+        else:
+            rep['cover_image'] = None
+
+        if instance.audio_file:
+            rep['audio_file'] = instance.audio_file.url
+        else:
+            rep['audio_file'] = None
+
+        return rep
 
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
