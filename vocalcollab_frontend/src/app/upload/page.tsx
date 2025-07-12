@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { fetchWithAuth } from '@/app/lib/fetchWithAuth'
 
 export default function UploadPage() {
@@ -8,8 +8,37 @@ export default function UploadPage() {
   const [description, setDescription] = useState('')
   const [tags, setTags] = useState('')
   const [audioFile, setAudioFile] = useState<File | null>(null)
-  const [coverImage, setCoverImage] = useState<File | null>(null)
+  const [coverUrl, setCoverUrl] = useState<string | null>(null)
   const [message, setMessage] = useState('')
+
+  // 动态引入 cloudinary widget 脚本
+  useEffect(() => {
+    const script = document.createElement("script")
+    script.src = "https://widget.cloudinary.com/v2.0/global/all.js"
+    script.async = true
+    document.body.appendChild(script)
+  }, [])
+
+  // 初始化 Upload Widget
+  const openCloudinaryWidget = () => {
+    // @ts-ignore
+    const myWidget = window.cloudinary.createUploadWidget({
+      cloudName: 'your_cloud_name',
+      uploadPreset: 'your_upload_preset',
+      cropping: true,
+      croppingAspectRatio: 1146 / 717,
+      multiple: false,
+      resourceType: 'image',
+      maxImageWidth: 1146,
+      maxImageHeight: 717,
+    }, (error: any, result: any) => {
+      if (!error && result && result.event === "success") {
+        console.log('Uploaded image URL:', result.info.secure_url)
+        setCoverUrl(result.info.secure_url)
+      }
+    })
+    myWidget.open()
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,8 +64,8 @@ export default function UploadPage() {
     formData.append('description', description)
     formData.append('tags', tags)
     formData.append('audio_file', audioFile)
-    if (coverImage) {
-      formData.append('cover_image', coverImage)
+    if (coverUrl) {
+      formData.append('cover_image', coverUrl)
     }
 
     try {
@@ -51,7 +80,7 @@ export default function UploadPage() {
         setDescription('')
         setTags('')
         setAudioFile(null)
-        setCoverImage(null)
+        setCoverUrl(null)
       } else {
         const errorData = await res.json()
         console.error('Upload failed:', errorData)
@@ -103,12 +132,16 @@ export default function UploadPage() {
 
           <div>
             <p className="text-sm font-semibold mb-1">Upload cover image (optional)</p>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setCoverImage(e.target.files?.[0] || null)}
-              className="w-full"
-            />
+            <button
+              type="button"
+              onClick={openCloudinaryWidget}
+              className="btn w-full"
+            >
+              Upload & Crop Image via Cloudinary
+            </button>
+            {coverUrl && (
+              <img src={coverUrl} alt="Cover preview" className="mt-2 rounded" />
+            )}
           </div>
 
           <button type="submit" className="btn w-full">Upload</button>
