@@ -1,1 +1,1 @@
-web: gunicorn vocalcollab_backend.wsgi
+web: gunicorn vocalcollab_backend.wsgi --timeout 120

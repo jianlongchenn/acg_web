@@ -168,3 +168,6 @@ else:
 CSRF_TRUSTED_ORIGINS = [
     'https://acgweb-frontend-production.up.railway.app',
 ]
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600
+FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600
