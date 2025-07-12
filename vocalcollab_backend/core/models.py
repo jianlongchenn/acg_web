@@ -18,12 +18,9 @@ class Track (models.Model):
 
     def __str__(self):
         return self.title
+
     
-    def clean(self):
-        if self.cover_image:
-            img = Image.open(self.cover_image)
-            if img.width > 1146 or img.height > 717:
-                raise ValidationError("the picture size can not bigger than 1146 x 717")
+
 
 # Comment model
 class Comment (models.Model):
