@@ -14,7 +14,7 @@ class Track(models.Model):
     audio_file = models.URLField(blank=True, null=True)  
     tags = models.CharField(help_text="Please use comma to separate")
     created_time = models.DateTimeField(auto_now_add=True)
-    cover_image = models.URLField(blank=True, null=True)  
+    cover_image = models.URLField(blank=True, null=True)  #change to url
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tracks')
 
     def __str__(self):
