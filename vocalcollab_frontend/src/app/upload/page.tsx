@@ -75,19 +75,22 @@ export default function UploadPage() {
       return
     }
 
-    const formData = new FormData()
-    formData.append('title', title)
-    formData.append('description', description)
-    formData.append('tags', tags)
-    formData.append('audio_file', audioUrl)
-    if (coverUrl) {
-      formData.append('cover_image', coverUrl)
+    const payload = {
+      title,
+      description,
+      tags,
+      audio_file: audioUrl,
+      cover_image: coverUrl,
     }
 
     try {
       const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/api/tracks/`, {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
       })
 
       if (res.ok) {
