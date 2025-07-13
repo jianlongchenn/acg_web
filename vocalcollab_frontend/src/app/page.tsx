@@ -24,14 +24,14 @@ export default function Home() {
 
   return (
     <main className="p-8 min-h-screen bg-background text-foreground">
-      {/* 上传按钮 */}
+     
       <div className="flex justify-end mb-8">
         <Link href="/upload">
           <button className="btn">Upload Your Work</button>
         </Link>
       </div>
 
-      {/* 作品展示区 */}
+    
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         {tracks.map((track) => (
           <Link key={track.id} href={`/track/${track.id}`}>
