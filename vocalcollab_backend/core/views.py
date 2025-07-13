@@ -148,3 +148,8 @@ class FollowingListView(generics.ListAPIView):
         username = self.kwargs['username']
         user = get_object_or_404(User, username=username)
         return User.objects.filter(followers__follower=user)
+    
+class CommentDeleteView(generics.DestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]

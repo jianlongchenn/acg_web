@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import TrackListCreateView, TrackDetailView, LikeCreateView, CommentListCreateView, RegisterView, FollowToggleView, ToggleFollowView, IsFollowingView, FollowerListView, FollowingListView
+from .views import TrackListCreateView, TrackDetailView, LikeCreateView, CommentListCreateView, RegisterView, FollowToggleView, ToggleFollowView, IsFollowingView, FollowerListView, FollowingListView, CommentDeleteView
 from .views import UserTrackListView
 
 urlpatterns = [
@@ -15,4 +15,5 @@ urlpatterns = [
     path('users/<str:username>/is_following/', IsFollowingView.as_view(), name='is-following'),
     path('users/<str:username>/followers/', FollowerListView.as_view(), name='follower-list'),
     path('users/<str:username>/following/', FollowingListView.as_view(), name='following-list'),
+    path('comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
 ]

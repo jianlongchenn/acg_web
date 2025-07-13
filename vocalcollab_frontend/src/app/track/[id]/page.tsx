@@ -28,6 +28,7 @@ export default function TrackDetailPage() {
   const [comments, setComments] = useState<Comment[]>([])
   const [newComment, setNewComment] = useState<string>('')
   const [commentError, setCommentError] = useState<string>('')
+  const [currentUser, setCurrentUser] = useState<string | null>(null)
 
   const fetchComments = async () => {
     try {
@@ -44,6 +45,16 @@ export default function TrackDetailPage() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tracks/${id}/`)
       const data = await res.json()
       setTrack(data)
+    }
+
+    const token = localStorage.getItem('access_token')
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]))
+        setCurrentUser(payload.username)
+      } catch (e) {
+        console.error('Invalid token')
+      }
     }
 
     if (id) {
@@ -80,6 +91,26 @@ export default function TrackDetailPage() {
       }
     } catch (err) {
       setCommentError('Network error. Please try later.')
+    }
+  }
+
+  const handleDeleteComment = async (commentId: number) => {
+    const confirmed = window.confirm('Are you sure you want to delete this comment?')
+    if (!confirmed) return
+
+    try {
+      const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/api/comments/${commentId}/delete/`, {
+        method: 'DELETE',
+      })
+
+      if (res.ok) {
+        fetchComments()
+      } else {
+        const errData = await res.json()
+        alert(errData.detail || 'Failed to delete comment.')
+      }
+    } catch (err) {
+      alert('Network error while deleting comment.')
     }
   }
 
@@ -122,7 +153,7 @@ export default function TrackDetailPage() {
           </p>
         </div>
 
-        {/* 评论区 */}
+        
         <div className="mt-8">
           <h2 className="text-xl font-bold mb-3">Comments</h2>
 
@@ -133,22 +164,33 @@ export default function TrackDetailPage() {
               {comments.map((comment) => (
                 <li key={comment.id} className="border rounded p-3 shadow-sm bg-white">
                   <p className="text-sm">{comment.content}</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {comment.user ? (
-                      <a href={`/user/${comment.user}`} className="text-blue-600 underline">
-                        {comment.user}
-                      </a>
-                    ) : (
-                      'Anonymous'
-                    )}{' '}
-                    at {new Date(comment.created_at).toLocaleString()}
+                  <p className="text-xs text-gray-500 mt-1 flex justify-between items-center">
+                    <span>
+                      {comment.user ? (
+                        <a href={`/user/${comment.user}`} className="text-blue-600 underline">
+                          {comment.user}
+                        </a>
+                      ) : (
+                        'Anonymous'
+                      )}{' '}
+                      at {new Date(comment.created_at).toLocaleString()}
+                    </span>
+
+                    {comment.user === currentUser && (
+                      <button
+                        onClick={() => handleDeleteComment(comment.id)}
+                        className="text-red-500 text-xs underline ml-4"
+                      >
+                        🗑 Delete
+                      </button>
+                    )}
                   </p>
                 </li>
               ))}
             </ul>
           )}
 
-          {/* 留言输入框 */}
+          
           <div className="mt-4">
             <textarea
               className="w-full border px-3 py-2 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-accent"
