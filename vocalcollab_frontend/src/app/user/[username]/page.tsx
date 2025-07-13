@@ -10,6 +10,7 @@ interface Track {
   title: string
   tags: string
   cover_image: string | null
+  user: string
 }
 
 interface User {
@@ -82,6 +83,25 @@ export default function UserPage() {
     setLoading(false)
   }
 
+  const handleDeleteTrack = async (trackId: number) => {
+    const confirm = window.confirm('Are you sure you want to delete this track? This cannot be undone.')
+    if (!confirm) return
+
+    try {
+      const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/api/tracks/${trackId}/`, {
+        method: 'DELETE',
+      })
+
+      if (res.ok) {
+        setTracks(prev => prev.filter(t => t.id !== trackId))
+      } else {
+        alert('Failed to delete the track.')
+      }
+    } catch (err) {
+      alert('Network error while deleting.')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient p-6">
       <div className="card max-w-4xl mx-auto">
@@ -98,58 +118,51 @@ export default function UserPage() {
           )}
         </div>
 
-        {/* Followers Section */}
-          <div>
-            <p
-              className="font-semibold cursor-pointer underline"
-              onClick={() => setShowFollowers(!showFollowers)}
-            >
-              Followers ({followers.length})
-            </p>
-            {showFollowers && (
-              <div className="mt-2 max-h-40 overflow-y-auto pr-1 custom-scrollbar">
-                <div className="flex flex-wrap gap-2">
-                  {followers.map(user => (
-                    <Link
-                      key={user.username}
-                      href={`/user/${user.username}`}
-                      className="bg-gray-100 text-sm px-3 py-1 rounded-full hover:underline whitespace-nowrap"
-                    >
-                      {user.username}
-                    </Link>
-                  ))}
-                </div>
+        {/* Followers */}
+        <div>
+          <p
+            className="font-semibold cursor-pointer underline"
+            onClick={() => setShowFollowers(!showFollowers)}
+          >
+            Followers ({followers.length})
+          </p>
+          {showFollowers && (
+            <div className="mt-2 max-h-40 overflow-y-auto pr-1 custom-scrollbar">
+              <div className="flex flex-wrap gap-2">
+                {followers.map(user => (
+                  <Link key={user.username} href={`/user/${user.username}`}
+                        className="bg-gray-100 text-sm px-3 py-1 rounded-full hover:underline whitespace-nowrap">
+                    {user.username}
+                  </Link>
+                ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
+        </div>
 
-          {/* Following Section */}
-          <div>
-            <p
-              className="font-semibold cursor-pointer underline"
-              onClick={() => setShowFollowing(!showFollowing)}
-            >
-              Following ({following.length})
-            </p>
-            {showFollowing && (
-              <div className="mt-2 max-h-40 overflow-y-auto pr-1 custom-scrollbar">
-                <div className="flex flex-wrap gap-2">
-                  {following.map(user => (
-                    <Link
-                      key={user.username}
-                      href={`/user/${user.username}`}
-                      className="bg-green-100 text-sm px-3 py-1 rounded-full hover:underline whitespace-nowrap"
-                    >
-                      {user.username}
-                    </Link>
-                  ))}
-                </div>
+        {/* Following */}
+        <div>
+          <p
+            className="font-semibold cursor-pointer underline"
+            onClick={() => setShowFollowing(!showFollowing)}
+          >
+            Following ({following.length})
+          </p>
+          {showFollowing && (
+            <div className="mt-2 max-h-40 overflow-y-auto pr-1 custom-scrollbar">
+              <div className="flex flex-wrap gap-2">
+                {following.map(user => (
+                  <Link key={user.username} href={`/user/${user.username}`}
+                        className="bg-green-100 text-sm px-3 py-1 rounded-full hover:underline whitespace-nowrap">
+                    {user.username}
+                  </Link>
+                ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
+        </div>
 
-
-        {/* Uploaded Tracks */}
+        {/* Tracks */}
         <div className="border-t pt-6">
           <h2 className="text-xl font-bold mb-4">Uploaded Tracks</h2>
           {tracks.length === 0 ? (
@@ -157,27 +170,33 @@ export default function UserPage() {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {tracks.map(track => (
-                <Link
-                  key={track.id}
-                  href={`/track/${track.id}`}
-                  className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition"
-                >
-                  {track.cover_image ? (
-                    <img
-                      src={track.cover_image}
-                      alt={track.title}
-                      className="w-full h-32 object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-32 bg-gray-200 flex items-center justify-center text-sm text-gray-500">
-                      No Cover
+                <div key={track.id} className="relative border rounded-lg shadow-sm hover:shadow-md transition">
+                  <Link href={`/track/${track.id}`}>
+                    {track.cover_image ? (
+                      <img
+                        src={track.cover_image}
+                        alt={track.title}
+                        className="w-full h-32 object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-32 bg-gray-200 flex items-center justify-center text-sm text-gray-500">
+                        No Cover
+                      </div>
+                    )}
+                    <div className="p-2">
+                      <h3 className="text-sm font-semibold truncate">{track.title}</h3>
+                      <p className="text-xs text-gray-500 truncate">{track.tags}</p>
                     </div>
+                  </Link>
+                  {currentUser === username && (
+                    <button
+                      onClick={() => handleDeleteTrack(track.id)}
+                      className="absolute top-2 right-2 text-xs text-red-600 bg-white px-2 py-0.5 rounded shadow-sm hover:bg-red-100"
+                    >
+                      Delete
+                    </button>
                   )}
-                  <div className="p-2">
-                    <h3 className="text-sm font-semibold truncate">{track.title}</h3>
-                    <p className="text-xs text-gray-500 truncate">{track.tags}</p>
-                  </div>
-                </Link>
+                </div>
               ))}
             </div>
           )}

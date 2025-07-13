@@ -12,6 +12,8 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import MyTokenObtainPairSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from core.permissions import IsOwnerOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
 # Create your views here.
@@ -26,9 +28,10 @@ class TrackListCreateView(generics.ListCreateAPIView):
         else:
             serializer.save()
 
-class TrackDetailView(generics.RetrieveAPIView):
+class TrackDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Track.objects.all()
     serializer_class = TrackSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 class CommentListCreateView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
