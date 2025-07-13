@@ -8,8 +8,8 @@ from django.contrib.auth.models import User
 
 class TrackSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
-    cover_image = serializers.ImageField(required=False, allow_null=True)
-    audio_file = serializers.FileField(required=True)
+    cover_image = serializers.URLField(required=False, allow_null=True)
+    audio_file = serializers.URLField(required=True)
 
     class Meta:
         model = Track
