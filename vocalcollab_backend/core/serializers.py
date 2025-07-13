@@ -16,20 +16,7 @@ class TrackSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['id', 'created_time', 'user']
 
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-        if instance.cover_image:
-            rep['cover_image'] = instance.cover_image.url
-        else:
-            rep['cover_image'] = None
-
-        if instance.audio_file:
-            rep['audio_file'] = instance.audio_file.url
-        else:
-            rep['audio_file'] = None
-
-        return rep
-
+        
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
 
